@@ -1,14 +1,11 @@
 //EXECUTAR AO CARREGAR A PÁGINA
 window.onload = function() {
     offTable();
-    usuario('resp');
+    usuario('gestor');
     navegation();
 
-    console.log('***');
-    console.log(getWKNumState());
-    console.log('***');
-
     triagem();
+    colleagueSelect();
 
 };
 
@@ -63,16 +60,19 @@ $(document).on('change', "#norma",
                 var nTb = i+1;
 
                 var reqRequisito = array.values[i].tb_req;
+                var reqOrient = array.values[i].tb_ori;
                 var reqDescricao = array.values[i].tb_desc;
                 var reqAplic = array.values[i].tb_aplic;
                 var reqStatus = "Em Aberto";
                 
 
                 $('#tb_requisito___'+nTb).val(reqRequisito);
+                $('#tb_orient___'+nTb).val(reqOrient);
                 $('#tb_desc___'+nTb).val(reqDescricao);
                 $('#tb_aplic___'+nTb).val(reqAplic);
                 $('#tb_status___'+nTb).val(reqStatus);
                 $('#tb_norma___'+nTb).val(tbdoc);
+                $('#tb_resp___'+nTb).val('-');
             }
 
             $('#div_zoom').addClass('nav-close');
@@ -87,11 +87,18 @@ $(document).on('change', "#norma",
 
 );
 
-//CSS do status do filtro
+//CSS do status filtro
 $(document).on('change', "#status",
     function attStatus() {
 
         cssStatus('status', 'status');
+    }
+);
+
+//CSS do Responsável Filtro
+$(document).on('change', "#f_resp",
+    function attResp() {
+        cssResp();
     }
 );
 
@@ -130,6 +137,18 @@ function cssStatus(st, cSt) {
     }
 };
 
+function cssResp() {
+    var resp = $('#f_resp').val();
+    if (resp == "") {
+        $('#f_resp').removeClass();
+        $('#f_resp').addClass('form-control');
+    }
+    else {
+        $('#f_resp').removeClass();
+        $('#f_resp').addClass('form-control resp2-input');
+    }
+}
+
 //Ocutar a tabela sem informações
 function offTable() {
 
@@ -144,7 +163,7 @@ function offTable() {
 
 //Filtro
 var count;
-function validation(r, a, s) {
+function validation(r, a, s, rs) {
 
     var input = $('#tb_requisito input');
 
@@ -153,101 +172,140 @@ function validation(r, a, s) {
     input.splice(0, 1);
 
     count = input.length;
+    var nFiltro = 0;
+    var nR = 0;
+    var nA = 0;
+    var nS = 0;
+    var nRS = 0;
     var array = new Array();
-    var arrayDupli = new Array();
-    var arrayTripli = new Array();
+    var array2 = new Array();
+    
 
     for (var i = 0; i < count; i++) {
 
-        if (r != "" && a == "" && s == "") {
-            if (input[i].value == r) {
-                array.push(input[i].id);
-            }
+       if (r != "" || a != "" || s != "" || rs != "") {
+
+           if (r != "" && r == input[i].value) {
+               array.push(input[i].id);
+               if (nR == 0) {
+                   nR++
+               }
+           }
+
+           if (a != "" && a == input[i].value) {
+               array.push(input[i].id);
+               if (nA == 0) {
+                   nA++;
+               }
+           }
+
+           if (s != "" && s == input[i].value) {
+               array.push(input[i].id);
+               if (nS == 0) {
+                   nS++;
+               }
+           }
+
+           if (rs != "" && rs == input[i].value) {
+               array.push(input[i].id);
+               if (nRS == 0) {
+                   nRS++;
+               }
+           }
+       }
+    }
+
+    if (r != "") {
+        if (nR == 0) {
+            nR++;
         }
-        else if (r != "" && a != "" && s == "") {
-            if (input[i].value == r) {
-                arrayDupli.push(input[i].id);
-
-            }
-            if (input[i].value == a) {
-                arrayDupli.push(input[i].id);
-
-            }
-           
+    }
+    if (a != "") {
+        if (nA == 0) {
+            nA++;
         }
-        else if (r != "" && a != "" && s != "") {
-            if (input[i].value == r) {
-                arrayTripli.push(input[i].id);
-
-            }
-            if (input[i].value == a) {
-                arrayTripli.push(input[i].id);
-
-            }
-            if (input[i].value == s) {
-                arrayTripli.push(input[i].id);
-
-            }
+    }
+    if (s != "") {
+        if (nS == 0) {
+            nS++;
         }
-        else if (r == "" && a != "" && s == "") {
-            if (input[i].value == a) {
-                array.push(input[i].id);
-            }
-        }
-        else if (r == "" && a != "" && s != "") {
-            if (input[i].value == a) {
-                arrayDupli.push(input[i].id);
-
-            }
-            if (input[i].value == s) {
-                arrayDupli.push(input[i].id);
-
-            }
-        }
-        else if (r == "" && a == "" && s != "") {
-            if (input[i].value == s) {
-                array.push(input[i].id);
-            }
+    }
+    if (rs != "") {
+        if (nRS == 0) {
+            nRS++;
         }
     }
 
-    for (var i = 0; i < arrayDupli.length; i++) {
-        for (var j = 0; j < arrayDupli.length; j++) {
-            var ai = arrayDupli[i].replace(/[^\d]+/g,'');
-            var aj = arrayDupli[j].replace(/[^\d]+/g,'');
-            
-            if (i != j) {
-                if (ai == aj) {
-                    array.push(ai);
+    nFiltro = nR+nA+nS+nRS;
+
+    if (nFiltro == 1) {
+        array2 = array;
+    }
+    else if (nFiltro == 2) {
+
+        for (var i = 0; i < array.length; i++) {
+            for (var j = 0; j < array.length; j++) {
+                var ai = array[i].replace(/[^\d]+/g,'');
+                var aj = array[j].replace(/[^\d]+/g,'');
+                
+                if (i != j) {
+                    if (ai == aj) {
+                        array2.push(ai);
+                    }
                 }
             }
         }
     }
+    else if (nFiltro == 3) {
 
-    for (var i = 0; i < arrayTripli.length; i++) {
-        for (var j = 0; j < arrayTripli.length; j++) {
-            for (var h = 0; h < arrayTripli.length; h++) {
+        for (var i = 0; i < array.length; i++) {
+            for (var j = 0; j < array.length; j++) {
+                for (var h = 0; h < array.length; h++) {
 
-                var ai = arrayTripli[i].replace(/[^\d]+/g,'');
-                var aj = arrayTripli[j].replace(/[^\d]+/g,'');
-                var ah = arrayTripli[h].replace(/[^\d]+/g,'');
-                
-                if (i != j && i != h && j != h) {
-                    if (ai == aj && ai == ah && aj == ah) {
-                        array.push(ai);
+                    var ai = array[i].replace(/[^\d]+/g,'');
+                    var aj = array[j].replace(/[^\d]+/g,'');
+                    var ah = array[h].replace(/[^\d]+/g,'');
+                    
+                    if (i != j && i != h && j != h) {
+                        if (ai == aj && ai == ah && aj == ah) {
+                            array2.push(ai);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    else if (nFiltro == 4) {
+
+        for (var i = 0; i < array.length; i++) {
+            for (var j = 0; j < array.length; j++) {
+                for (var h = 0; h < array.length; h++) {
+                    for (var z = 0; z < array.length; z++) {
+
+                        var ai = array[i].replace(/[^\d]+/g,'');
+                        var aj = array[j].replace(/[^\d]+/g,'');
+                        var ah = array[h].replace(/[^\d]+/g,'');
+                        var az = array[z].replace(/[^\d]+/g,'');
+                        
+                        if (i != j && i != h && i != z && j != h && j != z && h != z) {
+                            if (ai == aj && ai == ah && ai == az) {
+                                array2.push(ai);
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    return array;
+    return array2;
 };
 
 var id = [];
-function filter(req, apli, st) {
+var full = 0;
+function filter(req, apli, st, res) {
 
-    var constraint = validation(req, apli, st);
+    var constraint = validation(req, apli, st, res);
 
     var nTb = new Array();
 
@@ -263,14 +321,13 @@ function filter(req, apli, st) {
 
         var x = parseFloat(nTb[i]); //Numero do ID
         var y = parseFloat(count - 1); //Total de elementos
-        var z = parseFloat(y/4); //Relação de elementos com conjunto de 3
+        var z = parseFloat(y/5); //Relação de elementos com conjunto de 5
         var result = (x/z)*y;
 
-        n.push(result);
+        n.push(Math.round(result));
         id.push(x);
-
+        
     }
-
     return n;
 }
 
@@ -291,6 +348,11 @@ function filtroTabela() {
     var requisito = $('#requisito').val();
     var aplicabildade = $('#aplic').val();
     var status = $('#status').val();
+    var responsavel = $('#f_resp').val();
+
+    if (requisito == "" && aplicabildade == "" && status == "" && responsavel == "") {
+        full++;
+    }
 
     if (aplicabildade == 1) {
         aplicabildade = 'Mandatório';
@@ -310,7 +372,7 @@ function filtroTabela() {
     }
 
     //Remove Duplicatas input
-    var a = filter(requisito, aplicabildade, status);
+    var a = filter(requisito, aplicabildade, status, responsavel);
     var b = [];
 
     for (var i = 0; i < a.length; i++) {
@@ -342,32 +404,69 @@ function filtroTabela() {
         }
     }
 
-    for (var i = 0; i < arr.length; i++) {
+    if (full == 0) {
 
-        var n4 = arr[i];   //Status
-        var n3 = n4 -1;    //Aplicabilidade
-        var n2 = n3 -1;    //Requisito
-        var n1 = n2 -1;    //Norma
-        var nTxt = att[i]; //Descrição do Requisito
+        for (var i = 0; i < arr.length; i++) {
+            
+            var n4 = arr[i];   //Responsável
+            var n5 = parseInt(n4) +1;   //Status
+            var n3 = n4 -1;    //Aplicabilidade
+            var n2 = n3 -1;    //Requisito
+            var n1 = n2 -1;    //Norma
+            var nTxt = 3+(att[i] -1)*2; //Descrição do Requisito
+    
+            wdkAddChild('tb_filter');
+    
+            nCountWDK++;
+    
+            $('#filter_norma___'+nCountWDK).val(table[n1].value);
+            $('#filter_requisito___'+nCountWDK).val(table[n2].value);
+            $('#filter_desc___'+nCountWDK).val(table2[nTxt].value);
+            $('#filter_aplic___'+nCountWDK).val(table[n3].value);
+            $('#filter_resp___'+nCountWDK).val(table[n4].value);
+            $('#filter_status___'+nCountWDK).val(table[n5].value);
+            
+            cssStatus('filter_status___'+nCountWDK, 'filter_status___'+nCountWDK);
+    
+        }
+        nResult = arr.length;
+    }
+    else {
 
-        wdkAddChild('tb_filter');
+        var nRow = table.length - 2;
+        var n = nRow/5;
+ 
+        for (var i = 1; i < n; i++) {
 
-        nCountWDK++;
+            var vetor = ((i/(nRow/5))*(nRow))+1;
 
-        $('#filter_norma___'+nCountWDK).val(table[n1].value);
-        $('#filter_requisito___'+nCountWDK).val(table[n2].value);
-        $('#filter_desc___'+nCountWDK).val(table2[nTxt].value);
-        $('#filter_aplic___'+nCountWDK).val(table[n3].value);
-        $('#filter_status___'+nCountWDK).val(table[n4].value);
+            var nn5 = vetor;      //Status
+            var nn4 = vetor-1;    //Responsável
+            var nn3 = vetor-2;    //Aplicabilidade
+            var nn2 = vetor-3;    //Requisito
+            var nn1 = vetor-4;    //Norma
+           
+
+            wdkAddChild('tb_filter');
+    
+            nCountWDK++;
+    
+            $('#filter_norma___'+nCountWDK).val(table[nn1].value);
+            $('#filter_requisito___'+nCountWDK).val(table[nn2].value);
+            $('#filter_desc___'+nCountWDK).val(table2[i].value);
+            $('#filter_aplic___'+nCountWDK).val(table[nn3].value);
+            $('#filter_resp___'+nCountWDK).val(table[nn4].value);
+            $('#filter_status___'+nCountWDK).val(table[nn5].value);
+            
+            cssStatus('filter_status___'+nCountWDK, 'filter_status___'+nCountWDK);
+
+            
+        }
+        nResult = n;
         
-        cssStatus('filter_status___'+nCountWDK, 'filter_status___'+nCountWDK);
-
-
     }
 
     $(".editar").bind("click", Editar);
-
-    nResult = arr.length;
 
     if (nResult == 0) {
         $('#img_vazio').removeClass('nav-close');
@@ -400,7 +499,8 @@ function Editar() {
     var req = (arrayThis[2].substring(11, 33)).replace('"','');
     var desc = (arrayThis[3].substring(14, 31)).replace('"','');
     var aplic = (arrayThis[4].substring(11, 29)).replace('"','');
-    var status = (arrayThis[5].substring(11, 30)).replace('"','');
+    var resp = (arrayThis[5].substring(11, 28)).replace('"','');
+    var status = (arrayThis[6].substring(11, 30)).replace('"','');
 
     var a = $('#'+aplic).val();
     if (a == 'Mandatório') {
@@ -424,11 +524,14 @@ function Editar() {
     $('#requisito').val($('#'+req).val());
     $('#descRequisito').val($('#'+desc).val());
     $('#aplic').val(a);
+    $('#f_resp').val($('#'+resp).val());
     $('#status').val(s);
     cssStatus('status', 'status');
+    cssResp();
     
     $('#requisito').prop('disabled', true);
     $('#aplic').attr("disabled", true);
+    $('#f_resp').attr("disabled", true);
     $('#status').attr("disabled", true);
 
     exit_w1();
@@ -452,6 +555,7 @@ function cancelarAc() {
 
     $('#requisito').prop('disabled', false);
     $('#aplic').attr("disabled", false);
+    $('#f_resp').attr("disabled", false);
     $('#status').attr("disabled", false);
     $('#btn_cancelar').addClass('nav-close');
     if (getWKNumState() != 2) {
@@ -468,7 +572,11 @@ function cancelarAc() {
     $('#resultado').val("");
     $('#prazo').val("");
     $('#realizado').val("");
+    $('#f_resp').val("");
+    $('#resp').val("");
+    $('#area').val("");
     cssStatus('status', 'status');
+    cssResp();
 };
 
 //REGISTRO
@@ -478,10 +586,12 @@ function salvarAc() {
     var norma = $("#norma").val()[0];
     var requisito = $('#requisito').val();
     var acao = $('#acao').val();
-    var respon = $('#resp').val();
+    var respon = $('#gestor').val();
     var resultado = $('#resultado').val();
     var prazo = $('#prazo').val();
     var realizado = $('#realizado').val();
+    var area = $('#area').val();
+    var resp = $('#f_resp').val();
     var status = $('#status').val();
 
     if (status == 1) {
@@ -517,9 +627,7 @@ function salvarAc() {
     if (getWKNumState() == 1) {
         var rowTable = $('#tb_registroTcss')[0].rows.length;
         nRegisterCount = rowTable - 2;
-        console.log('>>>');
-        console.log(rowTable);
-        console.log(nRegisterCount);
+
     }
     else {
         nRegisterCount++;
@@ -528,8 +636,9 @@ function salvarAc() {
     $('#tb_normaR___'+nRegisterCount).val(norma);
     $('#tb_requisitoR___'+nRegisterCount).val(requisito);
     $('#tb_acao___'+nRegisterCount).val('Ação');
-    $('#t_tb_acao___'+nRegisterCount).val(acao);
-    $('#tb_responsavel___'+nRegisterCount).val(respon);
+    $('#t_tb_acao___'+nRegisterCount).val(acao+" - Gestor "+respon);
+    $('#tb_responsavel___'+nRegisterCount).val(resp);
+    $('#tb_area___'+nRegisterCount).val(area);
     $('#tb_resultado___'+nRegisterCount).val('Resultado');
     $('#t_tb_result___'+nRegisterCount).val(resultado);
     $('#tb_prazo___'+nRegisterCount).val(prazoE);
@@ -537,9 +646,6 @@ function salvarAc() {
     $('#tb_statusR___'+nRegisterCount).val(status);
 
     cssStatus('status','tb_statusR___'+nRegisterCount);
-
-    console.log(nRegisterCount);
-    console.log('<<<');
 
     var idSelect = $('#requisito').val();
     var table = $('#tb_requisito tr');
@@ -551,6 +657,7 @@ function salvarAc() {
 
         if (id == idSelect) {
             $('#tb_status___'+i).val(status);
+            $('#tb_resp___'+i).val(resp);
             cssStatus('status','tb_status___'+i);
         }
 
@@ -562,10 +669,11 @@ function salvarAc() {
 //Valida antes de Salvar
 function saveValition() {
     var acao = $('#acao').val();
-    var result = $('#resultado').val();
+    //var result = $('#resultado').val();
     var prazo = $('#prazo').val();
+    var resp = $('#resp').val();
 
-    if (acao == "" || result == "" || prazo == "") {
+    if (acao == "" || prazo == "" || resp == "") {
         alert('Preencha todos os campos corretamente');
     }
     else {
@@ -640,6 +748,14 @@ $(document).on('change', "#realizado",
     }
 );
 
+$(document).on('change', "#resp",
+    function atualizaResp() {
+        var resp = $('#resp').val();
+        $("#f_resp").val(resp);
+        cssResp();
+    }
+);
+
 //MODAL
 //Abrir
 function open_w1() {
@@ -698,8 +814,34 @@ function hojeCalculo() {
 
 function triagem() {
     if (getWKNumState() == 2) {
-        console.log('Chegou Aqui')
         $('#div_column2').addClass('nav-close');
         $('#div_column3').removeClass('nav-close');
     }
+}
+
+function colleagueSelect() {
+
+    var c1 = DatasetFactory.createConstraint("colleagueGroupPK.groupId", "Tondini", "Tondini", ConstraintType.MUST);
+
+    var constraints = new Array(c1);
+     
+    //Busca o dataset
+    var dataset = DatasetFactory.getDataset("colleagueGroup", null, constraints, null);
+    
+
+    for (var i = 0; i < dataset.values.length; i++) { 
+
+        $('#resp').append($('<option>', {
+
+            value: dataset.values[i]["colleagueGroupPK.colleagueId"],
+            text: dataset.values[i]["colleagueGroupPK.colleagueId"]
+        }));
+
+        $('#f_resp').append($('<option>', {
+
+            value: dataset.values[i]["colleagueGroupPK.colleagueId"],
+            text: dataset.values[i]["colleagueGroupPK.colleagueId"]
+        }));
+    }
+
 }

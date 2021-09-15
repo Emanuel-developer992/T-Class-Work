@@ -102,6 +102,25 @@
     z-index: 26 !important;
 }
 
+.resp-input {
+    border-color: #fbc02d !important;
+    background-color: #fbc02d !important;
+    color: white !important;
+    pointer-events: none !important;
+    box-shadow: none !important;
+    text-align: center !important;
+    z-index: 26 !important;
+}
+
+.resp2-input {
+    border-color: #fbc02d !important;
+    background-color: #fbc02d !important;
+    color: white !important;
+    box-shadow: none !important;
+    text-align: center !important;
+    z-index: 26 !important;
+}
+
 .scrolly {
     overflow-y: scroll;
     height: 350px;
@@ -182,7 +201,7 @@
 }
 
 a.note {
-	position: absolute;
+	position: relative;
 	/*font: 12px arial, verdana, helvetica, sans-serif;*/
 	/*padding: 0;*/
 	/*color: #039;*/
@@ -206,14 +225,15 @@ a.note:hover span {
 	/*width: 150px;*/
 	top: 2em;
 	text-align: justify;
-	left: 9.5em;
-	font: 10px Verdana, arial, helvetica, sans-serif;
+	left: 2em;
+	font: 13px Verdana, arial, helvetica, sans-serif;
 	padding: 10px 10px;
 	border: 1px solid #999;
 	background: white;
 	color: #000;
     width: 320px;
     height: 120px;
+    z-index: 26 !important;
 }
 
 a.note:hover textarea {

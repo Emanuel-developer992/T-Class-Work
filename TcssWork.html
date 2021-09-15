@@ -106,19 +106,23 @@
                                     <table tablename="tb_requisito" id="tb_requisito" class="table table-striped table-hover" noaddbutton="true" nodeletebutton="true">
                                         <thead>
                                         <tr>
+                                            <th>Descrição</th>
                                             <th>Norma</th>
                                             <th>Requisito</th>
-                                            <th>Descrição do Requisito</th>
+                                            <th>Orientação</th>
                                             <th>Aplicabilidade</th>
+                                            <th>Responsavél</th>
                                             <th>Status</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <tr>
+                                            <td style="width: 130px;"><a href="#" id="a_tb_desc" class="note"><i style="color: #222d6b;" class="flaticon flaticon-important icon-xl"></i><span><textarea id="tb_desc" name="tb_desc" style="width: 410px; height: 90px;" class="invisible-text" readonly></textarea></span></a></td>
                                             <td><input id="tb_norma" name="tb_norma" style="width: 75px;" class="invisible-input" readonly></td>
                                             <td><input id="tb_requisito" name="tb_requisito" style="width: 75px;" class="invisible-input" readonly></td>
-                                            <td><textarea id="tb_desc" name="tb_desc" style="width: 500px; height: 90px;" class="invisible-text" readonly></textarea></td>
+                                            <td><textarea id="tb_orient" name="tb_orient" style="width: 290px; height: 90px;" class="invisible-text" readonly></textarea></td>
                                             <td><input id="tb_aplic" name="tb_aplic" style="width: 90px;" class="invisible-input" readonly></td>
+                                            <td><input id="tb_resp" name="tb_resp" style="width: 90px;" class="form-control resp-input" readonly></td>
                                             <td><input id="tb_status" name="tb_status" style="width: 100px;" class="form-control aberto-input" readonly></td>
                                         </tr>
                                         </tbody>
@@ -157,6 +161,15 @@
                                             </select>
                                         </div>
 
+                                        <!-- 10° Input -->
+                                        <div class="form-group col-md-12">
+                                            <label for="f_resp">Responsável</label>
+                                            <select name="f_resp" type="text" class="form-control" id="f_resp">
+                                                <option value="">Selecione...</option>
+                                                <option value="-">-</option>
+                                            </select>
+                                        </div>
+
                                         <!-- 11° Input -->
                                         <div class="form-group col-md-12">
                                             <label for="status">Status</label>
@@ -170,8 +183,8 @@
 
                                         <!-- 12° Input -->
                                         <div class="form-group col-md-12">
-                                            <label for="descRequisito">Descrição do Requisito</label>
-                                            <p class="p-cinza">Preencha corretamente a descrição para salvar</p>
+                                            <label for="descRequisito">Orientação</label>
+                                            <p class="p-cinza">Orientação para atendimento</p>
                                             <textarea name="descRequisito" type="text" class="form-control" id="descRequisito" style="height: 82px;" readonly></textarea>
                                         </div>
 
@@ -188,23 +201,45 @@
                                     <div id="div_column2" class="row col-lg-8 div-column2">
 
                                         <!-- 13° Input -->
-                                        <div class="form-group col-md-12">
+                                        <div class="col-md-12">
                                             <label for="acao">Ação</label>
                                             <p class="p-cinza">Ação para Atendimento</p>
-                                            <textarea name="acao" type="text" class="form-control" id="acao"></textarea>
+                                            <input name="acao" type="text" class="form-control" id="acao">
                                         </div>
 
                                         <!-- 15° Input -->
-                                        <div class="form-group col-md-12">
+                                        <div class="col-md-12">
+                                            <label for="gestor">Gestor</label>
+                                            <input name="gestor" type="text" class="form-control" id="gestor" readonly>
+                                        </div>
+
+                                        <!-- 15/2° Input -->
+                                        <div class="col-md-12">
                                             <label for="resp">Responsável</label>
-                                            <input name="resp" type="text" class="form-control" id="resp" readonly>
+                                            <select name="resp" type="text" class="form-control" id="resp">
+                                                <option value="">Selecione...</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- 15/3° Input -->
+                                        <div class="col-md-12">
+                                            <label for="area">Área</label>
+                                            <select name="area" type="text" class="form-control" id="area">
+                                                <option value="">Selecione...</option>
+                                                <option value="Comercial">Comercial</option>
+                                                <option value="Operacional">Operacional</option>
+                                                <option value="Compras">Compras</option>
+                                                <option value="Vendas">Vendas</option>
+                                                <option value="Financeiro">Financeiro</option>
+                                                <option value="RH">RH</option>
+                                            </select>
                                         </div>
 
                                         <!-- 16° Input -->
-                                        <div class="form-group col-md-12">
+                                        <div class="col-md-12">
                                             <label for="resultado">Resultado Alcançado</label>
                                             <p class="p-cinza">Preencha com o resultado alcançado</p>
-                                            <textarea name="resultado" type="text" class="form-control" id="resultado"></textarea>
+                                            <input name="resultado" type="text" class="form-control" id="resultado">
                                         </div>
 
                                         <!-- 14° Input -->
@@ -214,7 +249,7 @@
                                         </div>
 
                                         <!-- 17° Input -->
-                                        <div class="form-group col-md-6">
+                                        <div class="form-group col-md-6" style="margin-bottom: 100px;">
                                             <label for="realizado">Realizado em:</label>
                                             <input name="realizado" type="date" class="form-control" id="realizado">
                                         </div>
@@ -252,10 +287,11 @@
                                     <thead>
                                     <tr>
                                         <th>Norma</th>
-                                        <th>Requisito</th>
-                                        <th>Responsavél</th>
+                                        <th>Req.</th>
+                                        <th>Resp.</th>
+                                        <th>Área</th>
                                         <th>Prazo</th>
-                                        <th>Realizado em</th>
+                                        <th>Realizado</th>
                                         <th>Ação</th>
                                         <th>Resultado</th>
                                         <th>Status</th>
@@ -265,9 +301,10 @@
                                     <tr>
                                         <td><input id="tb_normaR" name="tb_normaR" style="width: 72px;" class="invisible-input" readonly></td>
                                         <td><input id="tb_requisitoR" name="tb_requisitoR" style="width: 40px;" class="invisible-input" readonly></td>
-                                        <td><input id="tb_responsavel" name="tb_responsavel" style="width: 130px;" class="invisible-input" readonly></td>
-                                        <td><input id="tb_prazo" name="tb_prazo" style="width: 75px;" class="invisible-input" readonly></td>
-                                        <td><input id="tb_realizado" name="tb_realizado" style="width: 75px;" class="invisible-input" readonly></td>
+                                        <td><input id="tb_responsavel" name="tb_responsavel" style="width: 80px;" class="invisible-input" readonly></td>
+                                        <td><input id="tb_area" name="tb_area" style="width: 100px;" class="invisible-input" readonly></td>
+                                        <td><input id="tb_prazo" name="tb_prazo" style="width: 90px;" class="invisible-input" readonly></td>
+                                        <td><input id="tb_realizado" name="tb_realizado" style="width: 90px;" class="invisible-input" readonly></td>
                                         <td style="width: 130px;"><a href="#" id="a_tb_acao" class="note"><input id="tb_acao" name="tb_acao" class="form-control acao-input" value="Ação" readonly><span><textarea id="t_tb_acao" name="t_tb_acao" class="invisible-text" readonly></textarea></span></a></td>
                                         <td style="width: 130px;"><a href="#" id="a_tb_result" class="note"><input id="tb_resultado" name="tb_resultado" class="form-control result-input" value="Resultado" readonly><span><textarea id="t_tb_result" name="t_tb_result" class="invisible-text" readonly></textarea></span></a></td>
                                         <td><input id="tb_statusR" name="tb_statusR" style="width: 110px;" class="form-control aberto-input" readonly></td>
@@ -303,8 +340,9 @@
                                         <tr>
                                             <th>Norma</th>
                                             <th>Requisito</th>
-                                            <th>Descrição do Requisito</th>
+                                            <th>Orientação</th>
                                             <th>Aplicabilidade</th>
+                                            <th>Responsável</th>
                                             <th>Status</th>
                                             <th>Selecionar...</th>
                                         </tr>
@@ -313,8 +351,9 @@
                                         <tr>
                                             <td><input id="filter_norma" name="filter_norma" style="width: 75px;" class="invisible-input" readonly></td>
                                             <td><input id="filter_requisito" name="filter_requisito" style="width: 75px;" class="invisible-input" readonly></td>
-                                            <td><textarea id="filter_desc" name="filter_desc" style="width: 500px; height: 90px;" class="invisible-text" readonly></textarea></td>
+                                            <td><textarea id="filter_desc" name="filter_desc" style="width: 410px; height: 90px;" class="invisible-text" readonly></textarea></td>
                                             <td><input id="filter_aplic" name="filter_aplic" style="width: 90px;" class="invisible-input" readonly></td>
+                                            <td><input id="filter_resp" name="filter_resp" style="width: 90px;" class="form-control resp-input" readonly></td>
                                             <td><input id="filter_status" name="filter_status" style="width: 100px;" class="form-control aberto-input" readonly></td>
                                             <td><button id="btn_open" type="button" class="btn btn-success editar" style="color: white; width: 80px;"><i class="flaticon flaticon-send icon-xs"></i></button></td>
                                         </tr>
